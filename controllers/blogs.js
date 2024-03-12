@@ -6,8 +6,11 @@ blogsRouter.get('/', async (req, res) => {
     res.json(blogs)
 })
 
-blogsRouter.post('/', async (req, res) => {
+blogsRouter.post('/', async (req, res, next) => {
     const body = req.body
+    if (!body.title || !body.url) {
+        return res.status(400).end()
+    }
     const blog = {
         title: body.title,
         author: body.author,
