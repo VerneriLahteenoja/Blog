@@ -61,6 +61,22 @@ test.only('blog can be posted', async () => {
     assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 })
 
+test.only('blog likes at least 0', async () => {
+    const newBlog = {
+        title: "test likes",
+        author: "test likes to delete",
+        url: "nonexistent"
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+        .expect(response => {
+            assert.strictEqual(response.body.likes, 0)
+        })
+})
+
 
 after(async () => {
     await mongoose.connection.close()
