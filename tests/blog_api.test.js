@@ -4,7 +4,6 @@ const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
 const Blog = require('../models/blog')
-const { initialBlogs } = require('./test_helper')
 const helper = require('./test_helper')
 
 const api = supertest(app)
@@ -35,7 +34,7 @@ test('return right amount of blogs', async () => {
         })
 })
 
-test.only('blog has an id', async () => {
+test('blog has an id', async () => {
     await api
         .get('/api/blogs')
         .expect(200)
@@ -44,6 +43,22 @@ test.only('blog has an id', async () => {
                 assert.strictEqual(typeof blog.id, 'string')
             })
         })
+})
+
+test.only('blog can be posted', async () => {
+    const newBlog = {
+        title: "test blog",
+        author: "test to delete",
+        url: "nonexistent",
+        likes: 5
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(201)
+        .expect('Content-Type', /application\/json/)
+    const blogs = await helper.blogsInDb()
+    assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 })
 
 
