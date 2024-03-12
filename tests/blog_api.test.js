@@ -61,7 +61,7 @@ test.only('blog can be posted', async () => {
     assert.strictEqual(blogs.length, helper.initialBlogs.length + 1)
 })
 
-test.only('blog likes at least 0', async () => {
+test('blog likes at least 0', async () => {
     const newBlog = {
         title: "test likes",
         author: "test likes to delete",
@@ -75,6 +75,18 @@ test.only('blog likes at least 0', async () => {
         .expect(response => {
             assert.strictEqual(response.body.likes, 0)
         })
+})
+
+test.only('return status(400) if no title or url', async () => {
+    const newBlog = {
+        author: "test 400 to delete",
+    }
+    await api
+        .post('/api/blogs')
+        .send(newBlog)
+        .expect(400)
+    const blogs = await helper.blogsInDb()
+    assert.strictEqual(blogs.length, helper.initialBlogs.length)
 })
 
 
