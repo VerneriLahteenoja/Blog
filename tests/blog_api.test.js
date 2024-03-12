@@ -12,26 +12,38 @@ const api = supertest(app)
 beforeEach(async () => {
     await Blog.deleteMany({})
     let blogObjects = helper.initialBlogs
-    .map(blog => new Blog(blog))
+        .map(blog => new Blog(blog))
+
     const promiseArray = blogObjects.map(blog => blog.save())
     await Promise.all(promiseArray)
 })
 
-test.only('blogs are returned as json', async () => {
+test('blogs are returned as json', async () => {
     await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect('Content-Type', /application\/json/)
+        .get('/api/blogs')
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
 })
 
-test.only('return right amount of blogs', async () => {
+test('return right amount of blogs', async () => {
     await api
-    .get('/api/blogs')
-    .expect(200)
-    .expect(response => {
-        console.log(response.body)
-        assert.strictEqual(response.body.length, 3)
-    })
+        .get('/api/blogs')
+        .expect(200)
+        .field()
+        .expect(response => {
+            assert.strictEqual(response.body.length, 3)
+        })
+})
+
+test.only('blog has an id', async () => {
+    await api
+        .get('/api/blogs')
+        .expect(200)
+        .expect(response => {
+            response.body.forEach(blog => {
+                assert.strictEqual(typeof blog.id, 'string')
+            })
+        })
 })
 
 
