@@ -99,9 +99,11 @@ describe('tests require initial blogs', async () => {
       const blogs = await helper.blogsInDb()
       const blogToUpdate = blogs[0]
       const newUrl = 'updated url'
+      blogToUpdate.url = newUrl
+      blogToUpdate.likes = 20
       await api
         .put(`/api/blogs/${blogToUpdate.id}`)
-        .send({url: newUrl})
+        .send(blogToUpdate)
         .expect(200)
         .expect('Content-Type', /application\/json/)
         .expect(response => {
