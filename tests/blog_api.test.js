@@ -3,7 +3,7 @@ const assert = require('node:assert')
 const mongoose = require('mongoose')
 const supertest = require('supertest')
 const app = require('../app')
-const Blog = require('../models/blog')
+const { Blog } = require('../models/blog')
 const helper = require('./test_helper')
 
 const api = supertest(app)
@@ -81,6 +81,33 @@ describe('tests require initial blogs', async () => {
       const blogs = await helper.blogsInDb()
       assert.strictEqual(blogs.length, helper.initialBlogs.length)
     })  
+  })
+  describe('delete tests', async () => {
+    test('delete first by id', async () => {
+      const blogs = await helper.blogsInDb()
+      const blogToDelete = blogs[0]
+      await api
+        .delete(`/api/blogs/${blogToDelete.id}`)  
+        .expect(204)
+      const blogsAfterDeletion = (await helper.blogsInDb()).map(blog => blog.id)
+      assert(!blogsAfterDeletion.includes(blogToDelete.id))
+      assert.strictEqual(blogsAfterDeletion.length, helper.initialBlogs.length - 1)
+    })
+  })
+  describe('update tests', async () => {
+    test('update the first blogs likes', async () => {
+      const blogs = await helper.blogsInDb()
+      const blogToUpdate = blogs[0]
+      const newUrl = 'updated url'
+      await api
+        .put(`/api/blogs/${blogToUpdate.id}`)
+        .send({url: newUrl})
+        .expect(200)
+        .expect('Content-Type', /application\/json/)
+        .expect(response => {
+          assert.strictEqual(response.body.url, newUrl)
+        })
+    })
   })
 })
     
