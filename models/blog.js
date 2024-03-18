@@ -15,6 +15,10 @@ const blogSchema = mongoose.Schema({
   },
   likes: {
     type: Number
+  },
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
   }
 })
 const Blog = mongoose.model('Blog', blogSchema)
