@@ -1,10 +1,12 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6InN1cGVydXNlciIsImlkIjoiNjVmOWNjNzUxMDdjOThjNGRjYmVmY2JjIiwiaWF0IjoxNzEwOTUxMDUwfQ.zd_pU7-orEZCT3L-eseKtinBDi--DDTycPR2pzLd8f8
+
 
 {
-    "title": "TestBlog22222",
+    "title": "TestBlog55555",
     "author": "Matti Mannila",
     "url": "nonexistent",
     "likes": 0,
-    "userId": "65f886132879e7d843d054a5"
+    "userId": "65f9cc75107c98c4dcbefcbc"
 }
