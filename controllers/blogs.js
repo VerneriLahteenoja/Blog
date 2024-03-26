@@ -43,6 +43,10 @@ blogsRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
   if (!(req.user.id === blogToDelete.user.toString()))
     return res.status(401).json({ error: 'current user not authorized to delete'})
 
+  const user = await User.findById(req.user.id)  
+  user.blogs = user.blogs.filter(blog => blog._id.toString() !== blogToDelete._id.toString())
+  await user.save()
+  
   await Blog.findByIdAndDelete(req.params.id)
   res.status(204).end()
 })
