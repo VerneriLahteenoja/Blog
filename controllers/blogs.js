@@ -2,6 +2,7 @@ const blogsRouter = require('express').Router()
 const middleware = require('../utils/middleware')
 const { Blog } = require('../models/blog')
 const { User } =  require('../models/user')
+const { Comment } = require('../models/comment')
 
 blogsRouter.get('/', async (req, res) => {
   const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
@@ -32,6 +33,26 @@ blogsRouter.post('/', middleware.userExtractor, async (req, res) => {
   await user.save()
   await savedBlog.populate('user', { username: 1, name: 1 })
   res.status(201).json(savedBlog)
+})
+
+blogsRouter.post('/:id/comments', async (req, res) => {
+  // if (!req.user) {
+  //   return res.status(401).json({ error: 'token invalid' })
+  // }
+  const blog = await Blog.findById(req.params.id)
+  const comment = {
+    comment: req.body.comment,
+    blog: blog._id
+  }
+  const newComment = new Comment(comment)
+  const savedComment = await newComment.save()
+  await savedComment.populate('blog', { title: 1})
+  res.status(201).json(newComment)
+})
+
+blogsRouter.get('/comments', async (req, res) => {
+  const comments = await Comment.find({}).populate('blog', { title: 1})
+  res.status(200).json(comments)
 })
 
 blogsRouter.delete('/:id', middleware.userExtractor, async (req, res) => {
